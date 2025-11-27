@@ -10,7 +10,22 @@ import pyshark
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 import time
+from selenium.webdriver.common.by import By
 import numpy as np
+
+#没用
+# def element_test():
+    # option = webdriver.ChromeOptions()
+    # option.add_argument('--auto-open-devtools-for-tabs')
+    # driver = webdriver.Chrome(options=option,service=webdriver.chrome.service.Service(executable_path='D:/SomeThingsForProgrammer/chromedriver-win64/chromedriver.exe'))
+    # driver.get("https://live.bilibili.com/12723707?live_from=85001&spm_id_from=444.41.live_users.item.click")
+    # time.sleep(3)
+    # flag = driver.find_element(By.XPATH,"//li[text()=\"默认\"]")
+    # script = "arguments[0].class="+flag.get_attribute("class")+""
+    # path = driver.find_element(By.XPATH,"//li[text()=\"HEVC\"]")
+    # driver.execute_script(script,path)
+    # time.sleep(10)
+    # print(flag.get_attribute("class"))
 
 
 def get_request(url):
@@ -18,9 +33,9 @@ def get_request(url):
     option.add_argument('--auto-open-devtools-for-tabs')
     # 填入chromedriver路径
     driver = webdriver.Chrome(options=option,service=webdriver.chrome.service.Service(executable_path='D:/SomeThingsForProgrammer/chromedriver-win64/chromedriver.exe'))
-    scriptToExec="var performance = window.performance || window.mozPerformance || window.msPerformance || window.webkitPerformance || {}; var network = performance.getEntriesByType('resource') || {}; return network;"
     driver.get(url)
     time.sleep(5)
+    scriptToExec="var performance = window.performance || window.mozPerformance || window.msPerformance || window.webkitPerformance || {}; var network = performance.getEntriesByType('resource') || {}; return network;"
     netData = driver.execute_script(scriptToExec)
     driver.maximize_window()
     for item in netData:
@@ -34,7 +49,8 @@ def get_request(url):
 
 def temp_download_by_ffmpeg(m3u8_url):
     date = str(datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S"))
-    cmd_command = "ffmpeg -i "+"\"" + m3u8_url +"\""+" -vcodec libx264" + " -c copy Video/"+date+".mp4"
+    # cmd_command = "ffmpeg -i "+"\"" + m3u8_url +"\""+" -vcodec libx265" + " -c copy Video/"+date+".mp4"
+    cmd_command = "ffmpeg -i "+"\"" + m3u8_url +"\""+" -c:v libx265 -s 1920x1080" + " Video/"+date+".mp4"
     print(cmd_command)
     os.system(cmd_command)
 def m3u8_video_decode(m3u8_url):
@@ -74,6 +90,6 @@ def m3u8_video_decode(m3u8_url):
 # ffmpeg -i infile.mp4 -an -vcodec libx264 -crf 23 outfile.h264ffmpeg -i infile.mp4 -an -vcodec libx264 -crf 23 outfile.h264ffmpeg -i infile.mp4 -an -vcodec libx264 -crf 23 outfile.h264
 if __name__ == '__main__':
     # 填入b站直播间url
-    m3u8_video_decode(get_request('https://live.bilibili.com/4907286?broadcast_type=0&is_room_feed=1&spm_id_from=333.1387.to_liveroom.0.click&live_from=86002'))
+    m3u8_video_decode(get_request('https://live.bilibili.com/12723707?live_from=85001&spm_id_from=444.41.live_users.item.click'))
     # 关注sonicandshadow谢谢喵修改为需要录播的直播间url
 
